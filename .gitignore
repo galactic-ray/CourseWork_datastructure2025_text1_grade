@@ -3,5 +3,5 @@
 !build.sh
 !CMakeLists.txt
 !grade_gui.pro
-!main.cpp
+!main_gui.cpp
 !README.md
