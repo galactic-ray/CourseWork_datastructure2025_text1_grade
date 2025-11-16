@@ -4,12 +4,25 @@ CONFIG += c++17
 TARGET = grade_gui
 TEMPLATE = app
 
-SOURCES += main_gui.cpp
+# 源文件
+SOURCES += \
+    src/main_gui.cpp \
+    src/mainwindow.cpp
 
-# 默认构建类型
+HEADERS += \
+    src/mainwindow.h \
+    src/datastructures.h \
+    src/printmanager.h
+
+# 输出目录
 CONFIG(release, debug|release) {
-    DESTDIR = $$PWD
+    DESTDIR = $$PWD/build
 } else {
-    DESTDIR = $$PWD
+    DESTDIR = $$PWD/build
 }
 
+# 忽略构建文件
+OBJECTS_DIR = build/.obj
+MOC_DIR = build/.moc
+RCC_DIR = build/.rcc
+UI_DIR = build/.ui

@@ -1,7 +1,45 @@
-*
-!.gitignore
-!build.sh
-!CMakeLists.txt
-!grade_gui.pro
-!main_gui.cpp
-!README.md
+# 构建输出
+build/
+*.o
+*.moc
+*.pro.user
+*.pro.user.*
+Makefile
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.autosave
+
+# 编译产物
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 备份文件
+*.bak
+*.backup
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+*.csv
