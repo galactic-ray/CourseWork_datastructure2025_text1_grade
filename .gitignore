@@ -1,0 +1,17 @@
+# 编译生成的目标文件和可执行文件
+grade_gui
+*.o
+*.moc
+moc_*
+moc_predefs.h
+
+# CMake 相关
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# 备份
+*.bak
+*~
