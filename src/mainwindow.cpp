@@ -20,6 +20,9 @@
 #include <QTextStream>
 #include <QDateTime>
 #include <QInputDialog>
+#include <QPair>
+#include <QColor>
+#include <QFont>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QStringConverter>
 #else
@@ -246,6 +249,7 @@ void MainWindow::setupUI() {
 }
 
 void MainWindow::refreshTable() {
+    tableWidget->clearSpans();
     tableWidget->setRowCount(L.size());
     for(size_t i=0; i<L.size(); ++i) {
         const Grade& g = L[i];
@@ -663,9 +667,64 @@ void MainWindow::onShowAll() {
 }
 
 void MainWindow::onShowAllBySubject() {
-    refreshTable();
+    QStringList subjects = SI.getAllSubjects();
+    if(subjects.isEmpty()) {
+        tableWidget->clearSpans();
+        tableWidget->setRowCount(0);
+        log("按科目分组显示全部记录：暂无数据");
+        return;
+    }
+
+    // 统计总行数（包含科目标题行）
+    QList<QPair<QString, QList<Grade>>> grouped;
+    int totalRows = 0;
+    for(const QString& subject : subjects) {
+        QList<Grade> list = SI.getBySubject(subject);
+        if(list.isEmpty()) continue;
+        grouped.append(qMakePair(subject, list));
+        totalRows += 1 + list.size();
+    }
+
+    if(grouped.isEmpty()) {
+        tableWidget->clearSpans();
+        tableWidget->setRowCount(0);
+        log("按科目分组显示全部记录：暂无数据");
+        return;
+    }
+
+    tableWidget->clearSpans();
+    tableWidget->setRowCount(totalRows);
+
+    int row = 0;
+    for(const auto& entry : grouped) {
+        const QString& subject = entry.first;
+        const QList<Grade>& grades = entry.second;
+
+        tableWidget->setSpan(row, 0, 1, tableWidget->columnCount());
+        QTableWidgetItem* headerItem = new QTableWidgetItem(QStringLiteral("【科目】%1 （%2 条）").arg(subject).arg(grades.size()));
+        QFont font = headerItem->font();
+        font.setBold(true);
+        headerItem->setFont(font);
+        headerItem->setBackground(QColor(240, 240, 240));
+        tableWidget->setItem(row, 0, headerItem);
+        for(int col = 1; col < tableWidget->columnCount(); ++col) {
+            tableWidget->setItem(row, col, new QTableWidgetItem(""));
+        }
+        ++row;
+
+        for(const Grade& g : grades) {
+            tableWidget->setItem(row, 0, new QTableWidgetItem(QString::number(g.id)));
+            tableWidget->setItem(row, 1, new QTableWidgetItem(g.name));
+            tableWidget->setItem(row, 2, new QTableWidgetItem(g.major));
+            tableWidget->setItem(row, 3, new QTableWidgetItem(QString::number(g.year)));
+            tableWidget->setItem(row, 4, new QTableWidgetItem(g.subject));
+            tableWidget->setItem(row, 5, new QTableWidgetItem(QString::number(g.score, 'f', 1)));
+            ++row;
+        }
+    }
+
+    tableWidget->resizeColumnsToContents();
     log("按科目分组显示全部记录");
-    // 可以在这里添加按科目分组的显示逻辑
 }
 
 void MainWindow::onLoadFile() {
